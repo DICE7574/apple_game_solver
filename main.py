@@ -1,7 +1,10 @@
+import copy
 from apple_detector import detect_apples
 from start_game import start_game
 from print_grid import print_grid
 from solve import solve
+from prove import prove
+from greedy_answer import greedy_answer
 
 if start_game():
     print("Game started.")
@@ -17,4 +20,7 @@ if grid is None:
 else:
     print_grid(grid)
 
+test_grid = copy.deepcopy(grid)
 solve(grid)
+greedy_answer(test_grid)
+prove(grid)

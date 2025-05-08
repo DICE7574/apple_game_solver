@@ -17,12 +17,11 @@ def solve(grid):
 
     while True:
         found = False
-
+        candidates = []
         for y1 in range(rows):
-            for y2 in range(y1, rows):
-                for x1 in range(len(grid[y1])):
+            for x1 in range(len(grid[y1])):
+                for y2 in range(y1, rows):
                     for x2 in range(x1, len(grid[y2])):
-
                         apples_in_area = []
                         for y in range(y1, y2 + 1):
                             for x in range(x1, x2 + 1):
@@ -32,35 +31,32 @@ def solve(grid):
                                         apples_in_area.append(apple)
 
                         total = sum(apple.num for apple in apples_in_area)
-
-                        if total == 10 and apples_in_area:
-                            # 드래그 좌표 계산
-                            left = min(a.x for a in apples_in_area)
-                            top = min(a.y for a in apples_in_area)
-                            right = max(a.end_x for a in apples_in_area)
-                            bottom = max(a.end_y for a in apples_in_area)
-
-                            # 실제 드래그
-                            drag(left, top, right, bottom)
-
-                            # 지우기
-                            for apple in apples_in_area:
-                                apple.remove()
-
-                            total_score += len(apples_in_area)
-                            found = True
-                            print_grid(grid)
+                        if total > 10:
                             break
+                        if total == 10 and apples_in_area:
+                            # 후보로 저장
+                            candidates.append(apples_in_area)
 
-                    if found:
-                        break
-                if found:
-                    break
-            if found:
-                break
-
-        if not found:
+        if not candidates:
             break
+
+        selected = min(candidates, key=lambda group: (len(group), -max(a.num for a in group)))
+
+        # 드래그 좌표 계산
+        left = min(a.x for a in selected)
+        top = min(a.y for a in selected)
+        right = max(a.end_x for a in selected)
+        bottom = max(a.end_y for a in selected)
+
+        # 실제 드래그
+        drag(left, top, right, bottom)
+
+        # 지우기
+        for apple in selected:
+            apple.remove()
+
+        total_score += len(selected)
+        print_grid(grid)
 
     print("Solve finished. Total score:", total_score)
     return total_score
