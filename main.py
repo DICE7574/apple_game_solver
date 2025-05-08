@@ -6,6 +6,8 @@ from solve import solve
 from prove import prove
 from greedy_answer import greedy_answer
 
+do_solve = True
+
 if start_game():
     print("Game started.")
 else:
@@ -21,6 +23,7 @@ else:
     print_grid(grid)
 
 test_grid = copy.deepcopy(grid)
-solve(grid)
+if do_solve:
+    solve(grid)
+    prove(grid)
 greedy_answer(test_grid)
-prove(grid)

@@ -10,32 +10,33 @@ def drag(left, top, right, bottom):
 
     pyautogui.mouseUp()
 
+def find_removable_groups(grid):
+    rows = len(grid)
+    candidates = []
+    for y1 in range(rows):
+        for x1 in range(len(grid[y1])):
+            for y2 in range(y1, rows):
+                for x2 in range(x1, len(grid[y2])):
+                    apples_in_area = []
+                    for y in range(y1, y2 + 1):
+                        for x in range(x1, x2 + 1):
+                            if x < len(grid[y]):
+                                apple = grid[y][x]
+                                if apple.num != 0:
+                                    apples_in_area.append(apple)
+
+                    total = sum(apple.num for apple in apples_in_area)
+                    if total > 10:
+                        break
+                    if total == 10 and apples_in_area:
+                        # 후보로 저장
+                        candidates.append(apples_in_area)
+    return candidates
+
 def solve(grid):
     total_score = 0
-    rows = len(grid)
-    cols = max(len(row) for row in grid)
-
     while True:
-        found = False
-        candidates = []
-        for y1 in range(rows):
-            for x1 in range(len(grid[y1])):
-                for y2 in range(y1, rows):
-                    for x2 in range(x1, len(grid[y2])):
-                        apples_in_area = []
-                        for y in range(y1, y2 + 1):
-                            for x in range(x1, x2 + 1):
-                                if x < len(grid[y]):
-                                    apple = grid[y][x]
-                                    if apple.num != 0:
-                                        apples_in_area.append(apple)
-
-                        total = sum(apple.num for apple in apples_in_area)
-                        if total > 10:
-                            break
-                        if total == 10 and apples_in_area:
-                            # 후보로 저장
-                            candidates.append(apples_in_area)
+        candidates = find_removable_groups(grid)
 
         if not candidates:
             break
